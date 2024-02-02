@@ -21,6 +21,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-op
         logger.log(`DB_USERNAME: ${configService.get('DB_USERNAME')}`);
         logger.log(`DB_PASSWORD: ${configService.get('DB_PASSWORD')}`);
         logger.log(`DB_NAME: ${configService.get('DB_NAME')}`);
+
         const databaseConfig: TypeOrmModuleOptions = {
           type: 'postgres',
           host: configService.get('DB_HOST'),
