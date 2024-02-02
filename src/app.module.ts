@@ -16,6 +16,11 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-op
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const logger = new Logger('Database');
+        logger.log(`DB_HOST: ${configService.get('DB_HOST')}`);
+        logger.log(`DB_PORT: ${configService.get('DB_PORT')}`);
+        logger.log(`DB_USERNAME: ${configService.get('DB_USERNAME')}`);
+        logger.log(`DB_PASSWORD: ${configService.get('DB_PASSWORD')}`);
+        logger.log(`DB_NAME: ${configService.get('DB_NAME')}`);
         const databaseConfig: TypeOrmModuleOptions = {
           type: 'postgres',
           host: configService.get('DB_HOST'),

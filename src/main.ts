@@ -36,3 +36,10 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+/* CYCLIC_URL  https://weak-gray-tutu.cyclic.app
+CYCLIC_DB   weak-gray-tutuCyclicDB
+
+CYCLIC_BUCKET_NAME   cyclic-weak-gray-tutu-eu-north-1
+
+CYCLIC_APP_ID  weak-gray-tutu */
