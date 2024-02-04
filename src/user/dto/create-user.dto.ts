@@ -12,4 +12,8 @@ export class CreateUserDto {
     message: 'Phone number must be in the format +380123456789',
   })
   phoneNumber: string;
+
+  @MinLength(2, { message: 'Name must be more than 2 symbols' })
+  @MaxLength(32, { message: 'Name must be less than 32 symbols' })
+  name: string;
 }

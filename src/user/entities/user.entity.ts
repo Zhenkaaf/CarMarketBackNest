@@ -7,6 +7,7 @@ import {
   Entity,
   /* OneToMany, */
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -16,13 +17,18 @@ export class User {
   id: number;
 
   @Column()
+  @Unique(['email'])
   email: string;
 
   @Column()
   password: string;
 
   @Column()
+  @Unique(['phoneNumber'])
   phoneNumber: string;
+
+  @Column()
+  name: string;
 
   /*   @OneToMany(() => Category, (category) => category.user, {
     onDelete: 'CASCADE', // удаляем usera и его категории
