@@ -20,7 +20,7 @@ export class AuthService {
     if (user && isPasswordMatch) {
       return user;
     }
-    throw new UnauthorizedException('User or password are incorrect');
+    throw new UnauthorizedException('Email or password are incorrect');
   }
 
   async login(user: IUser) {

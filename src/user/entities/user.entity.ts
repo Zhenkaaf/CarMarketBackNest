@@ -1,11 +1,9 @@
-/* eslint-disable prettier/prettier */
-/* import { Category } from 'src/category/entities/category.entity';
-import { Transaction } from 'src/transaction/entities/transaction.entity'; */
+import { Car } from 'src/car/entities/car.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  /* OneToMany, */
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -30,15 +28,10 @@ export class User {
   @Column()
   name: string;
 
-  /*   @OneToMany(() => Category, (category) => category.user, {
-    onDelete: 'CASCADE', // удаляем usera и его категории
-  })
-  categories: Category[];
-
-  @OneToMany(() => Transaction, (transaction) => transaction.user, {
+  @OneToMany(() => Car, (car) => car.user, {
     onDelete: 'CASCADE',
   })
-  transactions: Transaction[]; */
+  cars: Car[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-options.interface';
+import { CarModule } from './car/car.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-op
       },
       inject: [ConfigService],
     }),
+    CarModule,
   ],
   controllers: [AppController],
   providers: [AppService],
