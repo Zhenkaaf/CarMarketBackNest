@@ -26,6 +26,7 @@ export class CarController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   create(@Body() createCarDto: CreateCarDto, @Req() req) {
+    console.log('Incoming request body:', createCarDto);
     return this.carService.create(createCarDto, +req.user.id);
   }
 
@@ -43,9 +44,7 @@ export class CarController {
   @Patch('update/:id')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
-  /* ValidationPipe, который встроен в NestJS и предназначен для автоматической валидации входных данных на основе классов DTO (Data Transfer Objects) и декораторов проверки класса class-validator.
-
-Когда запрос поступает на обработку в контроллер, ValidationPipe автоматически проверяет тело запроса (переданное через @Body()), параметры маршрута (переданные через @Param()), а также другие входные данные на соответствие определенным правилам валидации, указанным в DTO или через декораторы проверки. */
+  /* ValidationPipe, который встроен в NestJS и предназначен для автоматической валидации входных данных на основе классов DTO (Data Transfer Objects) и декораторов проверки класса class-validator. Когда запрос поступает на обработку в контроллер, ValidationPipe автоматически проверяет тело запроса (переданное через @Body()), параметры маршрута (переданные через @Param()), а также другие входные данные на соответствие определенным правилам валидации, указанным в DTO или через декораторы проверки. */
   update(
     @Param('id') carId: string,
     @Body() updateCarDto: UpdateCarDto,

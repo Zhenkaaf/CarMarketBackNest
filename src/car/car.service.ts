@@ -18,6 +18,7 @@ export class CarService {
   ) {}
 
   async create(createCarDto: CreateCarDto, userId: number) {
+    console.log('serviceOK');
     const newCar = {
       bodyType: createCarDto.bodyType,
       carMake: createCarDto.carMake,
@@ -90,6 +91,7 @@ export class CarService {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
     await this.carRepository.delete(carId);
-    return `Car with id: ${carId} has been successfully deleted`;
+    //return `Car with id: ${carId} has been successfully deleted`;
+    return { message: `Car with id: ${carId} has been successfully deleted` };
   }
 }
