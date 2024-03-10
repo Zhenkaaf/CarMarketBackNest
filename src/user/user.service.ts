@@ -24,7 +24,7 @@ export class UserService {
       },
     });
     if (isSuchUserExist)
-      throw new BadRequestException('User with such email already exist!');
+      throw new BadRequestException('User with such email already exists!');
 
     const isPhoneNumberUnique = await this.userRepository.findOne({
       where: {
@@ -54,6 +54,7 @@ export class UserService {
       email: user.email,
       phoneNumber: user.phoneNumber,
       name: user.name,
+      createdAt: user.createdAt,
       token,
     };
 
