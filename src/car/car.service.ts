@@ -22,6 +22,7 @@ export class CarService {
     const newCar = {
       bodyType: createCarDto.bodyType,
       carMake: createCarDto.carMake,
+      model: createCarDto.model,
       year: createCarDto.year,
       price: createCarDto.price,
       mileage: createCarDto.mileage,

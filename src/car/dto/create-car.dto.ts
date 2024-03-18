@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
 } from 'class-validator';
 
 export class CreateCarDto {
@@ -36,7 +37,7 @@ export class CreateCarDto {
     'SUBARU',
     'TOYOTA',
     'VOLVO',
-    'МОСКВИЧ',
+    'Moskvich',
     'AC',
     'ACURA',
     'Aion',
@@ -181,34 +182,24 @@ export class CreateCarDto {
     'Zotye',
     'ZUK',
     'ZXAUTO',
-    'АВІАТЕХНІКА',
-    'БАЗ',
-    'БЕЛАЗ',
-    'БОГДАН',
-    'ВАЗ',
-    'ВОДНИЙ ТР.',
-    'ГАЗ',
-    'ЕрАЗ',
-    'ЗАЗ',
-    'ЗІЛ',
-    'ІЖ',
-    'КАВЗ',
-    'КАЗ',
-    'КАМАЗ',
-    'КРАЗ',
-    'ЛАЗ',
-    'ЛіАЗ',
-    'МАЗ',
-    'МОТО',
-    'НефАЗ',
-    'ПАЗ',
-    'ПРИЧІП',
-    'РАФ',
-    'РЕТРО',
-    'СПЕЦТЕХНІКА',
-    'УАЗ',
-    'УРАЛ',
-    'ХАЗ',
+    'BAZ',
+    'BELAZ',
+    'BOGDAN',
+    'VAZ',
+    'GAZ',
+    'ZAZ',
+    'ZIL',
+    'IJ',
+    'KAMAZ',
+    'KRAZ',
+    'LAZ',
+    'LIAZ',
+    'MAZ',
+    'MOTO',
+    'PAZ',
+    'RAF',
+    'UAZ',
+    'URAL',
   ])
   carMake: string;
 
@@ -258,9 +249,13 @@ export class CreateCarDto {
   year: string;
 
   @IsNotEmpty()
+  model: string;
+
+  @IsNotEmpty()
   price: number;
 
   @IsNotEmpty()
+  @Max(999, { message: 'Mileage must be no more than 999' })
   mileage: number;
 
   @IsNotEmpty()
