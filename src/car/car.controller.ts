@@ -12,6 +12,7 @@ import {
   Req,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Options,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -33,6 +34,11 @@ export class CarController {
   @Get('list')
   findAll() {
     return this.carService.findAll();
+  }
+
+  @Options('list') // Обработчик для OPTIONS запроса на получение списка автомобилей
+  handleOptions() {
+    return {};
   }
 
   @Get(':id')
