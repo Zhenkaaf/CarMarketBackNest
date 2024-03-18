@@ -36,10 +36,10 @@ export class CarController {
     return this.carService.findAll();
   }
 
-  @Options('list') // Обработчик для OPTIONS запроса на получение списка автомобилей
+  /*   @Options('list') 
   handleOptions() {
     return {};
-  }
+  } */
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor) //для исключения пароля из ответа
