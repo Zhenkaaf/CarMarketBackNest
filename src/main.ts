@@ -5,6 +5,15 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix('api');
+    // Добавляем middleware для обработки OPTIONS запросов
+    app.use((req, res, next) => {
+      if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+      } else {
+        next();
+      }
+    });
+
     app.enableCors();
 
     const port = process.env.PORT || 3000;
