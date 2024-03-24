@@ -42,7 +42,9 @@ export class CarService {
   }
 
   async findAll() {
-    return await this.carRepository.find();
+    return await this.carRepository.find({
+      order: { createdAt: 'DESC' }, // Сортировка по убыванию даты создания
+    });
   }
 
   async findOne(carId: number) {
