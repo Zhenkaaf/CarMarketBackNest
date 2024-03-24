@@ -5,6 +5,8 @@ import {
   IsOptional,
   IsString,
   Max,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateCarDto {
@@ -37,10 +39,9 @@ export class CreateCarDto {
     'SUBARU',
     'TOYOTA',
     'VOLVO',
-    'Moskvich',
+    'MOSKVICH',
     'AC',
     'ACURA',
-    'Aion',
     'AIXAM',
     'ALFA ROMEO',
     'ARO',
@@ -63,11 +64,11 @@ export class CreateCarDto {
     'CHEVROLET',
     'CHRYSLER',
     'CITROEN',
-    'Cupra',
+    'CUPRA',
     'DADI',
     'DAF',
     'DAIHATSU',
-    'Datsun',
+    'DATSUN',
     'DODGE',
     'DONGFENG',
     'DS',
@@ -80,15 +81,12 @@ export class CreateCarDto {
     'FREIGHTLINER',
     'FSO',
     'FUQI',
-    'Ginaf',
     'GMC',
     'GONOW',
     'GREAT WALL',
     'GROZ',
     'HAFEI',
-    'Haval',
     'HDC',
-    'Hozon',
     'HUABEI',
     'HUANGHAI',
     'HUMMER',
@@ -102,7 +100,6 @@ export class CreateCarDto {
     'IVECO',
     'JAC',
     'JAGUAR',
-    'Jetour',
     'JIANGNAN',
     'JONWAY',
     'KAROSA',
@@ -112,31 +109,27 @@ export class CreateCarDto {
     'LAND ROVER',
     'LANDWIND',
     'LDV',
-    'Lesheng',
     'LEXUS',
     'LIAZ',
     'LIFAN',
     'LINCOLN',
     'MAN',
     'MASERATI',
-    'Maxus',
     'MERCURY',
     'MG',
     'MINI',
-    'Modern',
     'MUDAN',
-    'Mustang',
+    'MUSTANG',
     'NEOPLAN',
     'NYSA',
     'OLDSMOBILE',
     'ORA',
     'PLYMOUTH',
-    'Polestar',
+    'POLESTAR',
     'PONTIAC',
     'PORSCHE',
     'PROTON',
-    'Ravon',
-    'Raysince',
+    'RAVON',
     'ROBUR',
     'ROVER',
     'SAAB',
@@ -147,12 +140,11 @@ export class CreateCarDto {
     'SCANIA',
     'SCION',
     'SEAT',
-    'Seres',
     'SETRA',
     'SHAANXI',
     'SHAOLIN',
     'SHUANGHUAN',
-    'Skywell',
+    'SKYWELL',
     'SMA',
     'SMART',
     'SOUEAST',
@@ -164,22 +156,19 @@ export class CreateCarDto {
     'TATA',
     'TATRA',
     'TEMSA',
-    'Tesla',
+    'TESLA',
     'TIANMA',
     'TRABANT',
     'VANHOOL',
     'VEV',
     'WARTBURG',
-    'Weltmeister',
     'WULING',
     'XINKAI',
     'YOUYI',
     'YUEJIN',
     'YUTONG',
     'ZASTAVA',
-    'Zeekr',
     'ZHONGTONG',
-    'Zotye',
     'ZUK',
     'ZXAUTO',
     'BAZ',
@@ -249,6 +238,8 @@ export class CreateCarDto {
   year: string;
 
   @IsNotEmpty()
+  @MinLength(2, { message: 'Minimum 2 characters' })
+  @MaxLength(16, { message: 'Maximum 15 characters' })
   model: string;
 
   @IsNotEmpty()
@@ -263,9 +254,11 @@ export class CreateCarDto {
   fuelType: string;
 
   @IsNotEmpty()
+  @MinLength(2, { message: 'Minimum 2 characters' })
+  @MaxLength(16, { message: 'Maximum 15 characters' })
   city: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   desc: string;
 
   @IsArray()

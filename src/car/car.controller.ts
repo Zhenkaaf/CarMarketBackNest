@@ -36,11 +36,6 @@ export class CarController {
     return this.carService.findAll();
   }
 
-  /*   @Options('list') 
-  handleOptions() {
-    return {};
-  } */
-
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor) //для исключения пароля из ответа
   findOne(@Param('id') carId: string) {
