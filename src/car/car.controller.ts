@@ -13,11 +13,15 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Options,
+  UploadedFiles,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('car')
 export class CarController {
@@ -29,6 +33,26 @@ export class CarController {
   create(@Body() createCarDto: CreateCarDto, @Req() req) {
     console.log('Incoming request body:', createCarDto);
     return this.carService.create(createCarDto, +req.user.id);
+  }
+
+  @Post('upload-images')
+  @UseInterceptors(
+    FilesInterceptor('images', 6, {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async uploadImages(@UploadedFiles() images) {
+    console.log('Uploaded images:', images);
+    return 'Images uploaded successfully';
   }
 
   @Get('list')
