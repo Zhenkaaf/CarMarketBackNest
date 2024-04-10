@@ -14,6 +14,10 @@ import {
   ClassSerializerInterceptor,
   Options,
   UploadedFiles,
+  UploadedFile,
+  ParseUUIDPipe,
+  Request,
+  HttpStatus,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -30,12 +34,70 @@ export class CarController {
   @Post('create')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
-  create(@Body() createCarDto: CreateCarDto, @Req() req) {
+  async create(@Body() createCarDto: CreateCarDto, @Req() req) {
     console.log('Incoming request body:', createCarDto);
+    const newCar = await this.carService.create(createCarDto, +req.user.id);
+    return {
+      status: HttpStatus.CREATED,
+      message: 'Car created successfully',
+      data: newCar,
+    };
+  }
+
+  /* @UseGuards(JwtAuthGuard) */
+  @Post('add-photos/:carId')
+  @UseInterceptors(FilesInterceptor('images', 6))
+  async addImagesToCar(
+    @UploadedFiles() images: Express.Multer.File[],
+    @Param('carId') carId: string,
+    @Req() req,
+  ) {
+    console.log(images);
+    try {
+      await this.carService.uploadImagesToS3(images, +carId);
+      return {
+        status: HttpStatus.OK,
+        message: 'Photos added successfully',
+      };
+    } catch (error) {
+      console.error('Error uploading photos:', error);
+      throw error;
+    }
+  }
+
+  /*
+   @Post('create')
+   @UseGuards(JwtAuthGuard) 
+  @UsePipes(new ValidationPipe())
+  @UseInterceptors(FilesInterceptor('images', 6))
+  async create(
+    @Body() createCarDto: CreateCarDto,
+    @UploadedFiles() images: Express.Multer.File[],
+    @Req() req,
+  ) {
+    const imageUrls = await this.carService.uploadImagesToS3(images);
+    console.log('imageUrls', imageUrls);
+    // Добавить URL-адреса изображений к DTO
+    createCarDto.imageUrls = imageUrls;
+    // console.log('Incoming request body:', createCarDto);
+    // Вызвать метод создания с обновленным DTO
     return this.carService.create(createCarDto, +req.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 6))
   @Post('upload-images')
+  async addImageToRecipe(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Request() req,
+  ) {
+    console.log(file);
+    const { sub: email } = req.user;
+    await this.carService.addFileToCar(file, id, email);
+  } */
+
+  /*   @Post('upload-images')
   @UseInterceptors(
     FilesInterceptor('images', 6, {
       storage: diskStorage({
@@ -53,7 +115,7 @@ export class CarController {
   async uploadImages(@UploadedFiles() images) {
     console.log('Uploaded images:', images);
     return 'Images uploaded successfully';
-  }
+  } */
 
   @Get('list')
   findAll() {

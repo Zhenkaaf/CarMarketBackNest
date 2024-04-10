@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-options.interface';
 import { CarModule } from './car/car.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CarModule } from './car/car.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const logger = new Logger('Database');
+        console.log('appModule*********');
         logger.log(`POSTGRES_URL: ${configService.get('POSTGRES_URL')}`);
         const databaseUrl = configService.get('POSTGRES_URL');
         const databaseConfig: TypeOrmModuleOptions = {
@@ -37,6 +39,7 @@ import { CarModule } from './car/car.module';
       inject: [ConfigService],
     }),
     CarModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService],
