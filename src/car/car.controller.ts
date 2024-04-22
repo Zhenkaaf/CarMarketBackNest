@@ -18,6 +18,8 @@ import {
   ParseUUIDPipe,
   Request,
   HttpStatus,
+  ParseFilePipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -46,23 +48,19 @@ export class CarController {
 
   /* @UseGuards(JwtAuthGuard) */
   @Post('add-photos/:carId')
-  @UseInterceptors(FilesInterceptor('images', 6))
-  async addImagesToCar(
-    @UploadedFiles() images: Express.Multer.File[],
+  /*  @UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body). */
+  @UseInterceptors(FilesInterceptor('photos', 7))
+  async addPhotosToCar(
+    @UploadedFiles() photos: Express.Multer.File[],
     @Param('carId') carId: string,
-    @Req() req,
+    /*  @Req() req, */
   ) {
-    console.log(images);
-    try {
-      await this.carService.uploadImagesToS3(images, +carId);
-      return {
-        status: HttpStatus.OK,
-        message: 'Photos added successfully',
-      };
-    } catch (error) {
-      console.error('Error uploading photos:', error);
-      throw error;
-    }
+    console.log('carControllerInterceptors');
+    await this.carService.uploadPhotosToS3(photos, +carId);
+    return {
+      status: HttpStatus.OK,
+      message: 'Photos added successfully',
+    };
   }
 
   /*

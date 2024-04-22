@@ -21,7 +21,7 @@ export class CarService {
   ) {}
 
   async create(createCarDto: CreateCarDto, userId: number) {
-    console.log('CarServiceOK');
+    console.log('CarServiceCreateOK');
 
     //const imageUrls = await this.uploadImagesToS3(imageFiles);
     const newCar = {
@@ -102,8 +102,8 @@ export class CarService {
     return { message: `Car with id: ${carId} has been successfully deleted` };
   }
 
-  async uploadImagesToS3(images: Express.Multer.File[], carId: number) {
-    console.log('uploadImagesToS3');
+  async uploadPhotosToS3(photos: Express.Multer.File[], carId: number) {
+    console.log('CarServiceUploadPhotosToS3');
 
     const car = await this.carRepository.findOne({
       where: { carId },
@@ -111,13 +111,13 @@ export class CarService {
     if (!car) {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
-    const imageUrls = [];
-    for (const file of images) {
+    const photoUrls = [];
+    for (const file of photos) {
       const bucketKey = `${file.fieldname}${Date.now()}`;
       const fileUrl = await this.s3Service.uploadFile(file, bucketKey);
-      imageUrls.push(fileUrl);
+      photoUrls.push(fileUrl);
     }
-    car.imageUrls = imageUrls;
+    car.photoUrls = photoUrls;
     await this.carRepository.save(car);
   }
 }

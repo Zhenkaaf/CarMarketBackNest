@@ -42,7 +42,7 @@ export class Car {
   desc: string;
 
   @Column({ type: 'simple-array', nullable: true })
-  imageUrls: string[];
+  photoUrls: string[];
 
   @ManyToOne(() => User, (user) => user.cars)
   @JoinColumn({ name: 'userId' })

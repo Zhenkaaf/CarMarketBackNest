@@ -264,5 +264,6 @@ export class CreateCarDto {
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  imageUrls?: string[];
+  //@ArrayMaxSize(7, { message: 'The maximum number of images allowed is 7' })
+  photoUrls?: string[];
 }
