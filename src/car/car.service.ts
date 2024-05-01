@@ -50,6 +50,13 @@ export class CarService {
     });
   }
 
+  async findAllByUserId(userId: number) {
+    return await this.carRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOne(carId: number) {
     const car = await this.carRepository.findOne({
       where: { carId },

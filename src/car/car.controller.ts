@@ -59,6 +59,13 @@ export class CarController {
     return this.carService.findAll();
   }
 
+  @Get('/my-cars/:userId')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
+  findAllByUserId(@Param('userId') userId: string) {
+    return this.carService.findAllByUserId(+userId);
+  }
+
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor) //для исключения пароля из ответа
   findOne(@Param('id') carId: string) {
