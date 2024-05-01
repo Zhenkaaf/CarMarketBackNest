@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -111,8 +110,10 @@ export class CarService {
     if (!car) {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
+
     const photoUrls = [];
     for (const file of photos) {
+      console.log('file', file);
       const bucketKey = `${file.fieldname}${Date.now()}`;
       const fileUrl = await this.s3Service.uploadFile(file, bucketKey);
       photoUrls.push(fileUrl);
