@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
   PutObjectCommandOutput,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 
@@ -50,6 +51,25 @@ export class S3Service {
       throw new Error('Image not saved in s3!');
     } catch (err) {
       this.logger.error('Cannot save file to s3,', err);
+      throw err;
+    }
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    console.log('deleteFile**********S3Service******');
+    const bucket = this.configService.get<string>('S3_BUCKET');
+    console.log('bucket', bucket);
+    console.log('key', key);
+    const params = {
+      Bucket: bucket,
+      Key: key,
+    };
+
+    try {
+      await this.s3.send(new DeleteObjectCommand(params));
+      this.logger.log(`File ${key} deleted successfully`);
+    } catch (err) {
+      this.logger.error(`Error deleting file ${key}: ${err}`);
       throw err;
     }
   }

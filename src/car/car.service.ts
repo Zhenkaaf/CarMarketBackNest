@@ -103,6 +103,18 @@ export class CarService {
     if (!car) {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
+    const photoUrls = car.photoUrls;
+    try {
+      const deleteRequests = photoUrls.map(async (url) => {
+        // Extract key from URL
+        const key = url.substring(url.lastIndexOf('/') + 1);
+        await this.s3Service.deleteFile(key);
+      });
+      await Promise.all(deleteRequests);
+      console.log('Photos deleted successfully');
+    } catch (error) {
+      console.error('Error deleting photos:', error);
+    }
     await this.carRepository.delete(carId);
     //return `Car with id: ${carId} has been successfully deleted`;
     return { message: `Car with id: ${carId} has been successfully deleted` };
