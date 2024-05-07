@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -117,7 +118,12 @@ export class CarService {
     }
     await this.carRepository.delete(carId);
     //return `Car with id: ${carId} has been successfully deleted`;
-    return { message: `Car with id: ${carId} has been successfully deleted` };
+    return {
+      status: HttpStatus.OK,
+      data: {
+        message: `Car with id: ${carId} has been successfully deleted`,
+      },
+    };
   }
 
   async uploadPhotosToS3(photos: Express.Multer.File[], carId: number) {
