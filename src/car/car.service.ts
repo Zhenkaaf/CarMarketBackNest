@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -74,7 +75,7 @@ export class CarService {
     };
   }
 
-  async update(carId: number, updateCarDto: UpdateCarDto, userId: number) {
+  /*async update(carId: number, updateCarDto: UpdateCarDto, userId: number) {
     const car = await this.carRepository.findOne({
       where: { carId },
       relations: {
@@ -93,8 +94,45 @@ export class CarService {
     }
 
     return await this.carRepository.update(carId, updateCarDto);
-    /*  const updatedCar = await this.carRepository.findOne(carId);
-  return updatedCar; */
+      const updatedCar = await this.carRepository.findOne(carId);
+  return updatedCar;
+  } */
+
+  async update(carId: number, updateCarDto: UpdateCarDto, userId: number) {
+    try {
+      const car = await this.carRepository.findOne({
+        where: { carId },
+        relations: {
+          user: true,
+        },
+      });
+
+      if (!car) {
+        throw new NotFoundException(`Car with id ${carId} not found`);
+      }
+
+      if (car.user.id !== userId) {
+        throw new ForbiddenException(
+          `You do not have permission to update this car`,
+        );
+      }
+
+      await this.carRepository.update(carId, updateCarDto);
+
+      return {
+        status: 'success',
+      };
+    } catch (error) {
+      console.error('Error updating car:', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'An error occurred while updating the car',
+      );
+    }
   }
 
   async remove(carId: number) {
