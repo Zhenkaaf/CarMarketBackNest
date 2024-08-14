@@ -41,8 +41,13 @@ export class Car {
   @Column({ nullable: true })
   desc: string;
 
-  @Column({ type: 'simple-array', nullable: true })
-  photoUrls: string[];
+  /*  @Column({ type: 'simple-array', nullable: true })
+  photoUrls: string[]; */
+  @Column({ type: 'jsonb', nullable: true })
+  photos: { id: string; url: string }[];
+
+  /*  @Column({ type: 'simple-array', nullable: true })
+  mainPhotoUrl: string[]; */
 
   @ManyToOne(() => User, (user) => user.cars)
   @JoinColumn({ name: 'userId' })

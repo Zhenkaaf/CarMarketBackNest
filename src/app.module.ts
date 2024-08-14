@@ -30,9 +30,9 @@ import { S3Module } from './s3/s3.module';
           type: 'postgres',
           url: databaseUrl,
           synchronize: true,
+          //autoLoadEntities: true,
           entities: [__dirname + '/**/*.entity{.js, .ts}'],
         };
-
         logger.log(`Database configuration: ${JSON.stringify(databaseConfig)}`);
         return databaseConfig;
       },

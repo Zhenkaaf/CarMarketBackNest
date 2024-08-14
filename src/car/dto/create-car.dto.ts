@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsIn,
@@ -7,6 +8,7 @@ import {
   Max,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateCarDto {
@@ -261,9 +263,23 @@ export class CreateCarDto {
   @IsOptional()
   desc: string;
 
-  @IsArray()
+  /*   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   //@ArrayMaxSize(7, { message: 'The maximum number of images allowed is 7' })
-  photoUrls?: string[];
+  photoUrls?: string[]; */
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Object)
+  photos?: { id: string; url: string }[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  photosToDelete?: string[];
+  /*   @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  mainPhoto?: string[]; */
 }

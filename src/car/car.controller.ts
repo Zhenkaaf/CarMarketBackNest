@@ -38,9 +38,9 @@ export class CarController {
     };
   }
 
-  /* @UseGuards(JwtAuthGuard) */
+  /*  //@UseGuards(JwtAuthGuard)
   @Post('add-photos/:carId')
-  /*  @UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body). */
+   //@UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
   @UseInterceptors(FilesInterceptor('photos', 7))
   async addPhotosToCar(
     @UploadedFiles() photos: Express.Multer.File[],
@@ -52,7 +52,39 @@ export class CarController {
       status: HttpStatus.OK,
       message: 'Photos added successfully',
     };
+  } */
+
+  //@UseGuards(JwtAuthGuard)
+  @Post('add-photos/:carId')
+  //@UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
+  @UseInterceptors(FilesInterceptor('photos', 7))
+  async addPhotosToCar(
+    @UploadedFiles() photos: Express.Multer.File[],
+    @Body('photoIds') photoIds: string[],
+    @Param('carId') carId: string,
+  ) {
+    console.log('photoIds--------------------', photoIds);
+    await this.carService.uploadPhotosToS3(photos, photoIds, +carId);
+    return {
+      status: HttpStatus.OK,
+      message: 'Photos added successfully',
+    };
   }
+
+  /*  //@UseGuards(JwtAuthGuard)
+  @Post('upd-photos/:carId')
+  // @UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
+  @UseInterceptors(FilesInterceptor('photos', 7))
+  async updPhotosToCar(
+    @UploadedFiles() photos: Express.Multer.File[],
+    @Param('carId') carId: string,
+  ) {
+    await this.carService.uploadPhotosToS3(photos, +carId);
+    return {
+      status: HttpStatus.OK,
+      message: 'Photos updated successfully',
+    };
+  } */
 
   @Get('list')
   findAll() {
@@ -75,7 +107,7 @@ export class CarController {
   @Patch('update/:id')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
-  /* ValidationPipe, который встроен в NestJS и предназначен для автоматической валидации входных данных на основе классов DTO (Data Transfer Objects) и декораторов проверки класса class-validator. Когда запрос поступает на обработку в контроллер, ValidationPipe автоматически проверяет тело запроса (переданное через @Body()), параметры маршрута (переданные через @Param()), а также другие входные данные на соответствие определенным правилам валидации, указанным в DTO или через декораторы проверки. */
+  //ValidationPipe, который встроен в NestJS и предназначен для автоматической валидации входных данных на основе классов DTO (Data Transfer Objects) и декораторов проверки класса class-validator. Когда запрос поступает на обработку в контроллер, ValidationPipe автоматически проверяет тело запроса (переданное через @Body()), параметры маршрута (переданные через @Param()), а также другие входные данные на соответствие определенным правилам валидации, указанным в DTO или через декораторы проверки.
   update(
     @Param('id') carId: string,
     @Body() updateCarDto: UpdateCarDto,
