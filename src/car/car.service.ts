@@ -117,23 +117,20 @@ export class CarService {
           `You do not have permission to update this car`,
         );
       }
-      /*  if (updateCarDto.photosToDelete) {
-        const remainingPhotoUrls = car.photos.filter((photo) => {
-          return !updateCarDto.photosToDelete.includes(photo.url);
+      if (updateCarDto.photosToDelete?.length) {
+        console.log('есть фото на удаление');
+        const remainingPhotos = car.photos.filter((photo) => {
+          return !updateCarDto.photosToDelete.some(
+            (photoToDelete) => photoToDelete.url === photo.url,
+          );
         });
-        console.log('remainingPhotoUrls', remainingPhotoUrls);
-        car.photoUrls = remainingPhotoUrls;
-
+        console.log('remainingPhotoUrls', remainingPhotos);
         const res = await this.deletePhotosFromS3(updateCarDto.photosToDelete);
-        console.log('afterDeletePhotos', res);
-      } */
-      //Object.assign(car, updateCarDto); — объединяет оставшиеся поля из updateCarDto в объект car
-      // Обновление остальных полей
-      /*  const { photoUrls, ...carUpdates } = updateCarDto;
-      Object.assign(car, carUpdates);
-      await this.carRepository.save(car); */
-      //нельзя! update вы изменили какие-то поля в объекте car, а потом вызываете update, эти изменения не будут сохранены, потому что update обновляет только те поля, которые присутствуют в updateCarDto
-      //await this.carRepository.update(carId, updateCarDto);
+        updateCarDto.photos = remainingPhotos;
+        console.log('afterDeletePhotosRES', res);
+      }
+      await this.carRepository.update(carId, updateCarDto);
+      //Если у объекта car уже установлен carId, метод save автоматически определит это как запрос на обновление, а не создание нового объекта. Вы не должны передавать carId отдельно при вызове save, поскольку TypeORM использует присутствие первичного ключа в объекте для выполнения обновления.await this.carRepository.save(car);
       return {
         status: 'success',
       };

@@ -277,7 +277,7 @@ export class CreateCarDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  photosToDelete?: string[];
+  photosToDelete?: { id: string; url: string }[];
   /*   @IsArray()
   @IsString({ each: true })
   @IsOptional()
