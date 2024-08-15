@@ -124,10 +124,9 @@ export class CarService {
             (photoToDelete) => photoToDelete.url === photo.url,
           );
         });
-        console.log('remainingPhotoUrls', remainingPhotos);
-        const res = await this.deletePhotosFromS3(updateCarDto.photosToDelete);
+        await this.deletePhotosFromS3(updateCarDto.photosToDelete);
+        delete updateCarDto.photosToDelete;
         updateCarDto.photos = remainingPhotos;
-        console.log('afterDeletePhotosRES', res);
       }
       await this.carRepository.update(carId, updateCarDto);
       //Если у объекта car уже установлен carId, метод save автоматически определит это как запрос на обновление, а не создание нового объекта. Вы не должны передавать carId отдельно при вызове save, поскольку TypeORM использует присутствие первичного ключа в объекте для выполнения обновления.await this.carRepository.save(car);
@@ -152,7 +151,10 @@ export class CarService {
     if (!car) {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
-    await this.deletePhotosFromS3(car.photos);
+    if (car.photos) {
+      await this.deletePhotosFromS3(car.photos);
+    }
+
     await this.carRepository.delete(carId);
     //return `Car with id: ${carId} has been successfully deleted`;
     return {
@@ -183,7 +185,12 @@ export class CarService {
       const photoUrl = await this.s3Service.uploadFile(file, bucketKey);
       photosInfo.push({ url: photoUrl, id });
     }
-    car.photos = photosInfo;
+    if (car.photos) {
+      car.photos = [...car.photos, ...photosInfo];
+    } else {
+      car.photos = photosInfo;
+    }
+
     await this.carRepository.save(car);
     /* const photoUrls = car.photoUrls || [];
     for (const file of photos) {

@@ -11,6 +11,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+class PhotoToDeleteDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  url: string;
+}
+
 export class CreateCarDto {
   @IsNotEmpty()
   @IsIn(['Sedan', 'Wagon', 'Hatchback', 'Suv', 'Van'])
@@ -276,10 +284,7 @@ export class CreateCarDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  photosToDelete?: { id: string; url: string }[];
-  /*   @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  mainPhoto?: string[]; */
+  @ValidateNested({ each: true })
+  @Type(() => PhotoToDeleteDto)
+  photosToDelete?: PhotoToDeleteDto[];
 }
