@@ -36,7 +36,7 @@ export class Car {
   fuelType: string;
 
   @Column()
-  city: string;
+  region: string;
 
   @Column({ nullable: true })
   desc: string;

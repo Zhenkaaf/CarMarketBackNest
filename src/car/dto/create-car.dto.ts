@@ -264,9 +264,33 @@ export class CreateCarDto {
   fuelType: string;
 
   @IsNotEmpty()
-  @MinLength(2, { message: 'Minimum 2 characters' })
-  @MaxLength(16, { message: 'Maximum 15 characters' })
-  city: string;
+  @IsIn([
+    'Cherkasy',
+    'Chernihiv',
+    'Chernivtsi',
+    'Dnipropetrovsk',
+    'Donetsk',
+    'Ivano-Frankivsk',
+    'Kharkiv',
+    'Kherson',
+    'Khmelnytskyi',
+    'Kiev',
+    'Kirovohrad',
+    'Luhansk',
+    'Lviv',
+    'Mykolaiv',
+    'Odessa',
+    'Poltava',
+    'Rivne',
+    'Sumy',
+    'Ternopil',
+    'Vinnytsia',
+    'Volyn',
+    'Zakarpattia',
+    'Zaporizhia',
+    'Zhytomyr',
+  ])
+  region: string;
 
   @IsOptional()
   desc: string;
@@ -274,7 +298,7 @@ export class CreateCarDto {
   /*   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  //@ArrayMaxSize(7, { message: 'The maximum number of images allowed is 7' })
+  //@ArrayMaxSize(5, { message: 'The maximum number of images allowed is 5' })
   photoUrls?: string[]; */
   @IsOptional()
   @IsArray()

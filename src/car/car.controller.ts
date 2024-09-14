@@ -14,6 +14,7 @@ import {
   ClassSerializerInterceptor,
   UploadedFiles,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -57,34 +58,25 @@ export class CarController {
   //@UseGuards(JwtAuthGuard)
   @Post('add-photos/:carId')
   //@UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
-  @UseInterceptors(FilesInterceptor('photos', 7))
+  @UseInterceptors(FilesInterceptor('photos', 5))
   async addPhotosToCar(
     @UploadedFiles() photos: Express.Multer.File[],
     @Body('photoIds') photoIds: string[],
     @Param('carId') carId: string,
+    @Query('mainPhotoId') mainPhotoId?: string,
   ) {
-    console.log('photoIds--------------------', photoIds);
-    await this.carService.uploadPhotosToS3(photos, photoIds, +carId);
+    await this.carService.uploadPhotosToS3(
+      photos,
+      photoIds,
+      +carId,
+      mainPhotoId,
+    );
+    //Если uploadPhotosToS3 выбрасывает исключение, оно поднимается в метод addPhotosToCar, Если метод addPhotosToCar не содержит блоков try-catch, исключение передается глобальному обработчику NestJS, Глобальный обработчик исключений создает HTTP-ответ с кодом 404 (или другим соответствующим кодом) и отправляет его клиенту. Поэтому return с status: HttpStatus.OK и message: 'Photos added successfully' выполнится только в том случае, если весь процесс загрузки и сохранения фотографий пройдет без ошибок.
     return {
       status: HttpStatus.OK,
       message: 'Photos added successfully',
     };
   }
-
-  /*  //@UseGuards(JwtAuthGuard)
-  @Post('upd-photos/:carId')
-  // @UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
-  @UseInterceptors(FilesInterceptor('photos', 7))
-  async updPhotosToCar(
-    @UploadedFiles() photos: Express.Multer.File[],
-    @Param('carId') carId: string,
-  ) {
-    await this.carService.uploadPhotosToS3(photos, +carId);
-    return {
-      status: HttpStatus.OK,
-      message: 'Photos updated successfully',
-    };
-  } */
 
   @Get('list')
   findAll() {

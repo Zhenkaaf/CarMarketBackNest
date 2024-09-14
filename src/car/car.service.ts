@@ -30,7 +30,7 @@ export class CarService {
       price: createCarDto.price,
       mileage: createCarDto.mileage,
       fuelType: createCarDto.fuelType,
-      city: createCarDto.city,
+      region: createCarDto.region,
       desc: createCarDto.desc,
       user: {
         // при создании newCar вы должны использовать именно это имя - user.
@@ -125,9 +125,9 @@ export class CarService {
           );
         });
         await this.deletePhotosFromS3(updateCarDto.photosToDelete);
-        delete updateCarDto.photosToDelete;
         updateCarDto.photos = remainingPhotos;
       }
+      delete updateCarDto.photosToDelete;
       await this.carRepository.update(carId, updateCarDto);
       //Если у объекта car уже установлен carId, метод save автоматически определит это как запрос на обновление, а не создание нового объекта. Вы не должны передавать carId отдельно при вызове save, поскольку TypeORM использует присутствие первичного ключа в объекте для выполнения обновления.await this.carRepository.save(car);
       return {
@@ -169,6 +169,7 @@ export class CarService {
     photos: Express.Multer.File[],
     photoIds: string[],
     carId: number,
+    mainPhotoId?: string,
   ) {
     console.log('CarServiceUploadPhotosToS3');
     const car = await this.carRepository.findOne({
@@ -178,15 +179,27 @@ export class CarService {
       throw new NotFoundException(`Car with id ${carId} not found`);
     }
     const photosInfo: { url: string; id: string }[] = [];
-    for (let i = 0; i < photos.length; i++) {
-      const file = photos[i];
-      const id = photoIds[i];
-      const bucketKey = `${file.originalname}${Date.now()}`;
-      const photoUrl = await this.s3Service.uploadFile(file, bucketKey);
-      photosInfo.push({ url: photoUrl, id });
+    if (photos.length && photoIds.length) {
+      for (let i = 0; i < photos.length; i++) {
+        const file = photos[i];
+        const id = photoIds[i];
+        const bucketKey = `${file.originalname}${Date.now()}`;
+        const photoUrl = await this.s3Service.uploadFile(file, bucketKey);
+        photosInfo.push({ url: photoUrl, id });
+      }
     }
     if (car.photos) {
       car.photos = [...car.photos, ...photosInfo];
+      if (mainPhotoId) {
+        console.log('****************', mainPhotoId);
+        const mainPhoto = car.photos.find((photo) => photo.id === mainPhotoId);
+        if (mainPhoto) {
+          const otherPhotos = car.photos.filter(
+            (photo) => photo.id !== mainPhotoId,
+          );
+          car.photos = [mainPhoto, ...otherPhotos];
+        }
+      }
     } else {
       car.photos = photosInfo;
     }
