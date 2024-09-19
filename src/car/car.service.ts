@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpStatus,
   Injectable,
@@ -78,6 +79,83 @@ export class CarService {
       ...car,
       user: partialUserData,
     };
+  }
+
+  async filterCars(queryParams: string) {
+    const params = new URLSearchParams(queryParams);
+    console.log(params);
+    const region = params.get('region') || '';
+    const carMakes = params.get('carMakes')?.split(',') || [];
+    const yearFrom = params.get('yearFrom') || '';
+    const yearTo = params.get('yearTo') || '';
+    const priceFrom = params.get('priceFrom') || '';
+    const priceTo = params.get('priceTo') || '';
+    const queryBuilder = this.carRepository.createQueryBuilder('car');
+    console.log('region**', region);
+    console.log('carMakes**', carMakes);
+    console.log('yearFrom**', yearFrom);
+    console.log('yearTo**', yearTo);
+    console.log('priceFrom**', priceFrom);
+    console.log('priceTo**', priceTo);
+    console.log('queryBuilder**', queryBuilder);
+    if (region) {
+      queryBuilder.andWhere('car.region = :region', { region });
+    }
+
+    if (carMakes.length) {
+      queryBuilder.andWhere('car.carMake IN (:...carMakes)', { carMakes });
+    }
+
+    if (yearFrom) {
+      const yearFromInt = parseInt(yearFrom, 10);
+      if (isNaN(yearFromInt)) {
+        throw new BadRequestException('Invalid yearFrom parameter');
+      }
+      queryBuilder.andWhere('CAST(car.year AS INTEGER) >= :yearFrom', {
+        yearFrom: yearFromInt,
+      });
+    }
+
+    if (yearTo) {
+      const yearToInt = parseInt(yearTo, 10);
+      if (isNaN(yearToInt)) {
+        throw new BadRequestException('Invalid yearTo parameter');
+      }
+      queryBuilder.andWhere('CAST(car.year AS INTEGER) <= :yearTo', {
+        yearTo: yearToInt,
+      });
+    }
+
+    if (priceFrom) {
+      const priceFromInt = parseFloat(priceFrom);
+      if (isNaN(priceFromInt)) {
+        throw new BadRequestException('Invalid priceFrom parameter');
+      }
+      queryBuilder.andWhere('car.price >= :priceFrom', {
+        priceFrom: priceFromInt,
+      });
+    }
+
+    if (priceTo) {
+      const priceToInt = parseFloat(priceTo);
+      if (isNaN(priceToInt)) {
+        throw new BadRequestException('Invalid priceTo parameter');
+      }
+      queryBuilder.andWhere('car.price <= :priceTo', { priceTo: priceToInt });
+    }
+
+    try {
+      const filteredCars = await queryBuilder.getMany();
+      if (filteredCars.length === 0) {
+        return { message: 'Nothing found for your request' };
+      }
+      return filteredCars;
+    } catch (error) {
+      console.error('Error fetching filtered cars:', error);
+      throw new InternalServerErrorException(
+        'Failed to retrieve filtered cars',
+      );
+    }
   }
 
   /*async update(carId: number, updateCarDto: UpdateCarDto, userId: number) {

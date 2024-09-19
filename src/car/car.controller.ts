@@ -90,9 +90,15 @@ export class CarController {
     return this.carService.findAllByUserId(+userId);
   }
 
+  @Get('/filtered-cars/')
+  getFilteredCars(@Query() queryParams: any) {
+    return this.carService.filterCars(queryParams);
+  }
+
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor) //для исключения пароля из ответа
   findOne(@Param('id') carId: string) {
+    console.log('findOne');
     return this.carService.findOne(+carId);
   }
 
