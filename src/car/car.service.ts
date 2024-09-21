@@ -146,9 +146,9 @@ export class CarService {
 
     try {
       const filteredCars = await queryBuilder.getMany();
-      if (filteredCars.length === 0) {
+      /*  if (filteredCars.length === 0) {
         return { message: 'Nothing found for your request' };
-      }
+      } */
       return filteredCars;
     } catch (error) {
       console.error('Error fetching filtered cars:', error);
