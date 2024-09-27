@@ -39,22 +39,6 @@ export class CarController {
     };
   }
 
-  /*  //@UseGuards(JwtAuthGuard)
-  @Post('add-photos/:carId')
-   //@UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
-  @UseInterceptors(FilesInterceptor('photos', 7))
-  async addPhotosToCar(
-    @UploadedFiles() photos: Express.Multer.File[],
-    @Param('carId') carId: string,
-  ) {
-    console.log('carControllerInterceptors');
-    await this.carService.uploadPhotosToS3(photos, +carId);
-    return {
-      status: HttpStatus.OK,
-      message: 'Photos added successfully',
-    };
-  } */
-
   //@UseGuards(JwtAuthGuard)
   @Post('add-photos/:carId')
   //@UsePipes(new ValidationPipe()) Если стандартные встроенные валидации не срабатывают, возможно, это связано с тем, что параметр imageUrls не проходит через ValidationPipe в вашем методе addImagesToCar. Проверьте, передается ли imageUrls в этот метод как параметр запроса (query parameter) или тела запроса (request body).
@@ -78,9 +62,14 @@ export class CarController {
     };
   }
 
-  @Get('list')
+  /*   @Get('list')
   findAll() {
     return this.carService.findAll();
+  } */
+  @Get('list')
+  findAll(@Query('page') page: number) {
+    console.log(page);
+    return this.carService.findAll(page);
   }
 
   @Get('/my-cars/:userId')
@@ -95,11 +84,18 @@ export class CarController {
     return this.carService.filterCars(queryParams);
   }
 
+  /* @Get('/total-pages')
+  getTotalPages(@Query('limit') limit: string) {
+    console.log(limit);
+    const limitNumber = parseInt(limit, 10) || 10;
+    return this.carService.getTotalPages(limitNumber);
+  } */
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor) //для исключения пароля из ответа
   findOne(@Param('id') carId: string) {
     console.log('findOne');
     return this.carService.findOne(+carId);
+    //Когда приходит запрос на /total-pages, все работает нормально. Но если вы поместите @Get(':id') выше @Get('/total-pages'), любой запрос, начинающийся с /, будет соответствовать маршруту :id, и контроллер не дойдет до маршрута /total-pages.
   }
 
   @Patch('update/:id')

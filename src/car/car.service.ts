@@ -43,10 +43,18 @@ export class CarService {
     return await this.carRepository.save(newCar);
   }
 
-  async findAll() {
+  /*  async findAll() {
     return await this.carRepository.find({
       order: { createdAt: 'DESC' }, // Сортировка по убыванию даты создания
     });
+  } */
+  async findAll(page: number = 1, limit: number = 5) {
+    const [result, total] = await this.carRepository.findAndCount({
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { createdAt: 'DESC' },
+    });
+    return { data: result, totalPages: Math.ceil(total / limit) };
   }
 
   async findAllByUserId(userId: number) {
@@ -80,6 +88,12 @@ export class CarService {
       user: partialUserData,
     };
   }
+
+  /*   async getTotalPages(limit: number) {
+    const totalCars = await this.carRepository.count();
+    const totalPages = Math.ceil(totalCars / limit);
+    return totalPages;
+  } */
 
   async filterCars(queryParams: string) {
     const params = new URLSearchParams(queryParams);
