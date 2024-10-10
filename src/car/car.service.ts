@@ -54,7 +54,7 @@ export class CarService {
       skip: (page - 1) * limit,
       order: { createdAt: 'DESC' },
     });
-    return { data: result, totalPages: Math.ceil(total / limit) };
+    return { cars: result, totalPages: Math.ceil(total / limit) };
   }
 
   async findAllByUserId(userId: number) {
@@ -95,31 +95,22 @@ export class CarService {
     return totalPages;
   } */
 
-  async filterCars(queryParams: string) {
+  async filterCars(queryParams: string, limit: number = 5) {
     const params = new URLSearchParams(queryParams);
-    console.log(params);
     const region = params.get('region') || '';
     const carMakes = params.get('carMakes')?.split(',') || [];
     const yearFrom = params.get('yearFrom') || '';
     const yearTo = params.get('yearTo') || '';
     const priceFrom = params.get('priceFrom') || '';
     const priceTo = params.get('priceTo') || '';
+    const page = parseInt(params.get('page'), 10);
     const queryBuilder = this.carRepository.createQueryBuilder('car');
-    console.log('region**', region);
-    console.log('carMakes**', carMakes);
-    console.log('yearFrom**', yearFrom);
-    console.log('yearTo**', yearTo);
-    console.log('priceFrom**', priceFrom);
-    console.log('priceTo**', priceTo);
-    console.log('queryBuilder**', queryBuilder);
     if (region) {
       queryBuilder.andWhere('car.region = :region', { region });
     }
-
     if (carMakes.length) {
       queryBuilder.andWhere('car.carMake IN (:...carMakes)', { carMakes });
     }
-
     if (yearFrom) {
       const yearFromInt = parseInt(yearFrom, 10);
       if (isNaN(yearFromInt)) {
@@ -129,7 +120,6 @@ export class CarService {
         yearFrom: yearFromInt,
       });
     }
-
     if (yearTo) {
       const yearToInt = parseInt(yearTo, 10);
       if (isNaN(yearToInt)) {
@@ -139,7 +129,6 @@ export class CarService {
         yearTo: yearToInt,
       });
     }
-
     if (priceFrom) {
       const priceFromInt = parseFloat(priceFrom);
       if (isNaN(priceFromInt)) {
@@ -149,7 +138,6 @@ export class CarService {
         priceFrom: priceFromInt,
       });
     }
-
     if (priceTo) {
       const priceToInt = parseFloat(priceTo);
       if (isNaN(priceToInt)) {
@@ -159,11 +147,15 @@ export class CarService {
     }
 
     try {
+      const totalCars = await queryBuilder.getCount();
+      queryBuilder.skip((page - 1) * limit);
+      queryBuilder.take(limit);
+      queryBuilder.orderBy('car.createdAt', 'DESC');
       const filteredCars = await queryBuilder.getMany();
-      /*  if (filteredCars.length === 0) {
-        return { message: 'Nothing found for your request' };
-      } */
-      return filteredCars;
+      if (filteredCars.length === 0) {
+        return { cars: [], totalPages: 0 };
+      }
+      return { cars: filteredCars, totalPages: Math.ceil(totalCars / limit) };
     } catch (error) {
       console.error('Error fetching filtered cars:', error);
       throw new InternalServerErrorException(

@@ -15,6 +15,7 @@ import {
   UploadedFiles,
   HttpStatus,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -67,8 +68,7 @@ export class CarController {
     return this.carService.findAll();
   } */
   @Get('list')
-  findAll(@Query('page') page: number) {
-    console.log(page);
+  findAll(@Query('page', ParseIntPipe) page: number) {
     return this.carService.findAll(page);
   }
 
