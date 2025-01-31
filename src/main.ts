@@ -6,7 +6,12 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix('api');
 
-    app.enableCors();
+    app.enableCors({
+      origin: ['https://zhenkaaf.github.io'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      allowedHeaders: 'Content-Type, Authorization',
+      credentials: true,
+    });
 
     const port = process.env.PORT || 3000;
 
