@@ -29,6 +29,9 @@ import { S3Module } from './s3/s3.module';
           database: configService.get('DB_NAME'), */
           type: 'postgres',
           url: databaseUrl,
+          ssl: {
+            rejectUnauthorized: false,
+          },
           synchronize: true,
           //autoLoadEntities: true,
           entities: [__dirname + '/**/*.entity{.js, .ts}'],
