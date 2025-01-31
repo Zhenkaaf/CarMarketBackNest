@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist/interfaces/typeorm-options.interface';
 import { CarModule } from './car/car.module';
 import { S3Module } from './s3/s3.module';
+/* import * as fs from 'fs'; */
 
 @Module({
   imports: [
@@ -21,8 +22,15 @@ import { S3Module } from './s3/s3.module';
         console.log('appModule*********');
         logger.log(`POSTGRES_URL: ${configService.get('POSTGRES_URL')}`);
         const databaseUrl = configService.get('POSTGRES_URL');
-        const caCertificate = configService.get('CA_CERTIFICATE');
-        console.log('caCertificate*******************', caCertificate);
+        /*  const caCertificate = configService.get('CA_CERTIFICATE'); */
+        /* const caCertificate = fs.readFileSync('ca.pem');
+        if (!caCertificate) {
+          throw new Error(
+            'CA_CERTIFICATE is not defined in environment variables!',
+          );
+        } */
+        /*  const caBuffer = caCertificate ? Buffer.from(caCertificate) : undefined;
+        console.log('caCertificate*******************', caCertificate); */
         const databaseConfig: TypeOrmModuleOptions = {
           /* host: configService.get('DB_HOST'),
           port: configService.get('DB_PORT'),
@@ -32,8 +40,8 @@ import { S3Module } from './s3/s3.module';
           type: 'postgres',
           url: databaseUrl,
           ssl: {
-            rejectUnauthorized: true,
-            ca: caCertificate,
+            rejectUnauthorized: false,
+            /*   ca: caBuffer, */
           },
           synchronize: true,
           //autoLoadEntities: true,
