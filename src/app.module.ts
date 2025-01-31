@@ -21,6 +21,8 @@ import { S3Module } from './s3/s3.module';
         console.log('appModule*********');
         logger.log(`POSTGRES_URL: ${configService.get('POSTGRES_URL')}`);
         const databaseUrl = configService.get('POSTGRES_URL');
+        const caCertificate = configService.get('CA_CERTIFICATE');
+        console.log('caCertificate*******************', caCertificate);
         const databaseConfig: TypeOrmModuleOptions = {
           /* host: configService.get('DB_HOST'),
           port: configService.get('DB_PORT'),
@@ -30,7 +32,8 @@ import { S3Module } from './s3/s3.module';
           type: 'postgres',
           url: databaseUrl,
           ssl: {
-            rejectUnauthorized: false,
+            rejectUnauthorized: true,
+            ca: caCertificate,
           },
           synchronize: true,
           //autoLoadEntities: true,
